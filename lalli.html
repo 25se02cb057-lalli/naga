@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marks Dashboard</title>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #174ea6;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #ccc;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #174ea6;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background: #0b3575;
+        }
+
+        #message {
+            color: #d00;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin-top: 25px;
+        }
+
+        footer {
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Student Marks Dashboard</h1>
+    <p>Enter student details to update the chart dynamically.</p>
+
+    <form id="studentForm">
+        <input type="text" id="studentName"
+               placeholder="Student Name" required>
+
+        <input type="number" id="studentMarks"
+               placeholder="Marks (0-100)"
+               min="0" max="100" required>
+
+        <button type="submit">Add Student</button>
+    </form>
+
+    <p id="message"></p>
+
+    <h2>Student Performance</h2>
+
+    <div class="chart-container">
+        <canvas id="marksChart"></canvas>
+    </div>
+
+    <button onclick="resetData()">Reset Chart</button>
+
+    <footer>
+        <p>Created using HTML, CSS, JavaScript and Chart.js</p>
+    </footer>
+</div>
+
+<script>
+    // Initial student data
+    let students = [
+        { name: "Rahul", marks: 75 },
+        { name: "Priya", marks: 90 },
+        { name: "Amit", marks: 65 },
+        { name: "Sneha", marks: 85 }
+    ];
+
+    // Create chart
+    const ctx = document.getElementById("marksChart");
+
+    const marksChart = new Chart(ctx, {
+        type: "bar",
+
+        data: {
+            labels: students.map(s => s.name),
+
+            datasets: [{
+                label: "Marks",
+                data: students.map(s => s.marks),
+                backgroundColor: [
+                    "#4285F4",
+                    "#34A853",
+                    "#FBBC05",
+                    "#EA4335",
+                    "#9C27B0",
+                    "#00ACC1"
+                ],
+                borderWidth: 1
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: "Marks"
+                    }
+                },
+
+                x: {
+                    title: {
+                        display: true,
+                        text: "Students"
+                    }
+                }
+            }
+        }
+    });
+
+    // Update chart with current student data
+    function updateChart() {
+        marksChart.data.labels =
+            students.map(s => s.name);
+
+        marksChart.data.datasets[0].data =
+            students.map(s => s.marks);
+
+        marksChart.update();
+    }
+
+    // Add student dynamically
+    document.getElementById("studentForm")
+        .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const name = document.getElementById("studentName")
+            .value.trim();
+
+        const marks = Number(
+            document.getElementById("studentMarks").value
+        );
+
+        if (!name || marks < 0 || marks > 100) {
+            document.getElementById("message").textContent =
+                "Please enter valid details.";
+            return;
+        }
+
+        students.push({ name: name, marks: marks });
+
+        updateChart();
+
+        document.getElementById("message").textContent =
+            "Student added successfully!";
+
+        this.reset();
+    });
+
+    // Reset chart
+    function resetData() {
+        students = [
+            { name: "Rahul", marks: 75 },
+            { name: "Priya", marks: 90 },
+            { name: "Amit", marks: 65 },
+            { name: "Sneha", marks: 85 }
+        ];
+
+        updateChart();
+
+        document.getElementById("message").textContent =
+            "Chart has been reset.";
+    }
+</script>
+
+</body>
+</html>
